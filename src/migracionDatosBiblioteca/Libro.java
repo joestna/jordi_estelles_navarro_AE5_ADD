@@ -2,41 +2,41 @@ package migracionDatosBiblioteca;
 
 public class Libro 
 {
-	private int _id;
-	private String _title;
-	private String _author;
-	private int _yearPublication;
+	private String _titulo;
+	private String _autor;
+	private String _anyoNacimiento;
+	private int _anyoPublicacion;
 	private String _editorial;
-	private int _numPages;
+	private int _numeroPaginas;
 	
-	public Libro( int id, String title, String author, int yearPublication, String editorial, int numPages )
+	public Libro( String titulo, String autor, String anyoNacimiento, int anyoPublicacion, String editorial, int numeroPaginas )
 	{
-		_id = id;
-		_title = title;
-		_author = author;
-		_yearPublication = yearPublication;
+		_titulo = titulo;
+		_autor = autor;
+		_anyoNacimiento = anyoNacimiento;
+		_anyoPublicacion = anyoPublicacion;
 		_editorial = editorial;
-		_numPages = numPages;
+		_numeroPaginas = numeroPaginas;
 	}
 	
-	public int getId()
+	public int getAnyoPublicacion()
 	{
-		return _id;
+		return _anyoPublicacion;
 	}
 	
-	public String getTitle() 
+	public String getTitulo() 
 	{
-		return _title;
+		return _titulo;
 	}
 	
-	public String getAuthor() 
+	public String getAutor() 
 	{
-		return _author;
+		return _autor;
 	}
 	
-	public int getYearPublication()
+	public String getAnyoNacimiento()
 	{
-		return _yearPublication;
+		return _anyoNacimiento;
 	}
 	
 	public String getEditorial()
@@ -44,8 +44,8 @@ public class Libro
 		return _editorial;
 	}
 	
-	public int getNumPages()
+	public int getNumeroPaginas()
 	{
-		return _numPages;
+		return _numeroPaginas;
 	}
 }
