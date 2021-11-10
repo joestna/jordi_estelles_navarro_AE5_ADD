@@ -16,26 +16,33 @@ public class App {
 		while( continuidadAPP )
 		{
 			System.out.println( "\nQue desea hacer? : " );
-			System.out.println( "Actualizar base de datos --> 1" );
+			System.out.println( "Migrar datos de un CSV --> 1" );
 			System.out.println( "Consultar base de datos --> 2" );
-			System.out.println( "Consultas automaticas --> 3" );
+			System.out.println( "Consultas requeridas en enunciado --> 3" );
 			System.out.println( "Cerrar APP --> 4" );
 			System.out.print( "> " );
 			String respuesta = sc.next();
+			System.out.print( "\n" );
 			
-			switch( respuesta )
+			switch( respuesta ) 
 			{
 				case "1" :
-					biblioteca.setAlmacenLibros( gestorBD.AnalizarCSV() );				
+					System.out.println( "Introduce la ruta del fichero CSV : " );
+					String rutaFichero = sc.next();
+					
+					biblioteca.setAlmacenLibros( gestorBD.AnalizarCSV( rutaFichero ) );				
 					gestorBD.MigracionABDMySQL( biblioteca.getAlmacenLibros() );
 					break;
 					
 				case "2" :
-					gestorBD.ConsultarBD( sc );
+					
+					String consulta = gestorBD.GenerarConsulta( sc );
+					
+					gestorBD.ConsultarBD( consulta );
 					break;
 					
 				case "3" :
-					//gestorBD.ConsultasAutomaticas();
+					gestorBD.ConsultasRequeridas();
 					break;
 					
 				case "4" :
@@ -44,18 +51,6 @@ public class App {
 					break;					
 					
 				default :
-					
-					//TESTING
-//					for( Libro libro : gestorBD.AnalizarCSV() )
-//					{
-//						System.out.println( libro.getTitulo() );
-//						System.out.println( libro.getAutor() );
-//						System.out.println( libro.getAnyoNacimiento() );
-//						System.out.println( libro.getAnyoPublicacion() );
-//						System.out.println( libro.getEditorial() );
-//						System.out.println( libro.getNumeroPaginas() );
-//					}
-
 					System.out.println( ">> Valor introducido no valido." );
 					break;				
 			}

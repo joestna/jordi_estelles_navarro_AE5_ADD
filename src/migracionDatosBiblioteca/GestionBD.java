@@ -13,13 +13,14 @@ import java.util.Scanner;
 
 public class GestionBD 
 {
-	public ArrayList<Libro> AnalizarCSV()
+	public ArrayList<Libro> AnalizarCSV( String rutaFichero )
 	{
 		ArrayList<Libro> librosEnCSV = new ArrayList<Libro>();
 
 		try
 		{
-			FileReader fr = new FileReader( "/home/jordi/proyectosJavaEclipse/jordi_estelles_navarro_AE4_ADD/datos/AE04_T1_4_JDBC_Datos.csv" );
+			// /home/jordi/proyectosJavaEclipse/jordi_estelles_navarro_AE4_ADD/datos/AE04_T1_4_JDBC_Datos.csv			
+			FileReader fr = new FileReader( "rutaFichero" );
 
 			BufferedReader br = new BufferedReader( fr );
 			String linea = br.readLine();
@@ -49,11 +50,10 @@ public class GestionBD
 		return librosEnCSV;
 	}
 	
+	
+	
 	public void MigracionABDMySQL( ArrayList<Libro> almacenLibros ) throws ClassNotFoundException
-	{
-		// try catch
-		// leer la lista de libros y parsear datos de cada uno de los libros
-		
+	{		
 		Class.forName( "com.mysql.cj.jdbc.Driver" ); // Click derecho en proyecto > build path > configure build path > libraries > module path > anyadir libreria externa > archivo .jar
 		
 		try 
@@ -91,11 +91,126 @@ public class GestionBD
 		}
 	}
 	
-	public void ConsultarBD( Scanner sc )
+	
+	
+	public void ConsultarBD( String consulta ) throws ClassNotFoundException
 	{
-		// try catch
-		System.out.println( ">> Introduce la consulta a realizar : " );
-		System.out.print( "> " );
-		sc.next();
+		Class.forName( "com.mysql.cj.jdbc.Driver" );
+		
+		try 
+		{
+			System.out.println( ">> Conectando a la base de datos. " );
+			Connection con = DriverManager.getConnection( "jdbc:mysql://localhost:3306/biblioteca","root","");
+			System.out.println( ">> Conexion correcta. " );
+			
+			Statement stmt = con.createStatement();
+			
+			ResultSet rs = stmt.executeQuery( consulta );
+			
+			System.out.println( ">> Consulta realizada correctamente." );
+			
+			rs.close();
+			con.close();
+		}
+		catch( SQLException e )
+		{
+			System.out.println( ">> Error en la conexion. " );
+			e.printStackTrace();			
+		}
+	}
+	
+	
+	
+	public void ConsultasRequeridas() throws ClassNotFoundException
+	{
+		String infoGeneralLibros = "SELECT titulo, autor, anyo_publicacion FROM libro GROUP BY autor"; //MODIFICAR
+		String editorialesSiglo21 = "SELECT anyo_publicacion, editorial, COUNT(editorial) AS libros_siglo21 FROM libro WHERE anyo_publicacion>2000 GROUP BY editorial";
+		
+		try 
+		{
+			System.out.println( ">> Conectando a la base de datos. " );
+			Connection con = DriverManager.getConnection( "jdbc:mysql://localhost:3306/biblioteca","root","");
+			System.out.println( ">> Conexion correcta. " );
+			
+			Statement stmt = con.createStatement();
+			
+			
+			// PRIMERA CONSULTA
+			
+			System.out.println( "Libros (título, autor y año de publicación) de los autores nacidos antes de 1950. : " );
+			
+			ResultSet rs = stmt.executeQuery( infoGeneralLibros );
+			
+			System.out.format( "%30s%30s%20s%20s", "Titulo", "Autor", "Anyo Publicacion", "\n" );
+			System.out.format( "%30s%30s%20s%20s", "------", "-----", "----------------", "\n" );
+			
+			while( rs.next() )
+			{
+				System.out.format( "%30s%30s%20s%20s", rs.getString(1), rs.getString(2), rs.getInt(3), "\n" );
+			}			
+			
+			System.out.println( ">> Primera consulta realizada correctamente.\n" );
+			
+			
+			// SEGUNDA CONSULTA			
+			
+			System.out.println( "Editoriales que publicaron libros despues del 2000 : " );
+			
+			rs = stmt.executeQuery( editorialesSiglo21 );
+			
+			System.out.format( "%30s%30s%20s%20s", "Anyo Publicacion", "Editorial", "libros_siglo21", "\n" );
+			System.out.format( "%30s%30s%20s%20s", "----------------", "---------", "--------------", "\n" );
+			
+			while( rs.next() )
+			{
+				System.out.format( "%30s%30s%20s%20s", rs.getString(1), rs.getString(2), rs.getInt(3), "\n" );
+			}			
+			
+			System.out.println( ">> Segunda consulta realizada correctamente." );
+			
+			rs.close();
+			con.close();
+		}
+		catch( SQLException e )
+		{
+			System.out.println( ">> Error en la conexion. " );
+			e.printStackTrace();	
+		}
+	}
+	
+	
+
+	public String GenerarConsulta( Scanner sc )
+	{
+		String comprobarConsulta;
+		String consulta = "";
+		
+		do
+		{
+			System.out.println( "Introduce la consulta palabra por palabra incluyendo signos : palabra + tecla ENTER" );
+			System.out.println( "Cuando termine la sentencia escribir : FIN");
+			System.out.println( "---");
+
+			String comodinConsulta = "";
+			
+			while( !comodinConsulta.equals( "FIN" ) )
+			{
+				consulta += comodinConsulta;
+				comodinConsulta = sc.next();
+				
+				if(  !comodinConsulta.equals( "FIN" ) || !comodinConsulta.equals( "fin" )  ) 
+				{
+					consulta += " ";
+				}
+			}		
+			
+			System.out.println( "---");
+			System.out.println( consulta );
+			System.out.println( "> Es correcta la consulta? : S/N" );
+			comprobarConsulta = sc.next();
+			
+		}while( comprobarConsulta.equals( "N" ) || comprobarConsulta.equals( "n" ) );
+		
+		return consulta;
 	}
 }
