@@ -6,10 +6,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+
 
 public class GestionBD 
 {
@@ -21,7 +24,7 @@ public class GestionBD
 		{
 			// /home/jordi/proyectosJavaEclipse/jordi_estelles_navarro_AE4_ADD/datos/AE04_T1_4_JDBC_Datos.csv			
 			FileReader fr = new FileReader( "rutaFichero" );
-
+			
 			BufferedReader br = new BufferedReader( fr );
 			String linea = br.readLine();
 			
@@ -106,6 +109,9 @@ public class GestionBD
 			Statement stmt = con.createStatement();
 			
 			ResultSet rs = stmt.executeQuery( consulta );
+			ResultSetMetaData rsmd = rs.getMetaData();
+			
+			System.out.println( rsmd.getColumnCount() );
 			
 			System.out.println( ">> Consulta realizada correctamente." );
 			
@@ -183,24 +189,30 @@ public class GestionBD
 	public String GenerarConsulta( Scanner sc )
 	{
 		String comprobarConsulta;
-		String consulta = "";
+		String consulta;
 		
 		do
 		{
+			consulta = "";
+			
 			System.out.println( "Introduce la consulta palabra por palabra incluyendo signos : palabra + tecla ENTER" );
 			System.out.println( "Cuando termine la sentencia escribir : FIN");
 			System.out.println( "---");
 
 			String comodinConsulta = "";
 			
-			while( !comodinConsulta.equals( "FIN" ) )
+			while( !comodinConsulta.equals( "FIN" ) && !comodinConsulta.equals( "fin" ) )
 			{
-				consulta += comodinConsulta;
 				comodinConsulta = sc.next();
 				
-				if(  !comodinConsulta.equals( "FIN" ) || !comodinConsulta.equals( "fin" )  ) 
+				if(  !comodinConsulta.equals( "FIN" ) && !comodinConsulta.equals( "fin" )  ) 
 				{
+					consulta += comodinConsulta;
 					consulta += " ";
+				}
+				else
+				{
+					consulta = consulta.substring(0, consulta.length() -1 );
 				}
 			}		
 			

@@ -48,7 +48,7 @@ public class App {
 				case "4" :
 					System.out.println( ">> Nos vemos pronto ;)" );
 					continuidadAPP = false;
-					break;					
+					break;						
 					
 				default :
 					System.out.println( ">> Valor introducido no valido." );
