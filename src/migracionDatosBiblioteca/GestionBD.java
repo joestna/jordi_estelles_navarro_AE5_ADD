@@ -1,6 +1,7 @@
 package migracionDatosBiblioteca;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,8 +23,10 @@ public class GestionBD
 
 		try
 		{
-			// /home/jordi/proyectosJavaEclipse/jordi_estelles_navarro_AE4_ADD/datos/AE04_T1_4_JDBC_Datos.csv			
-			FileReader fr = new FileReader( "rutaFichero" );
+			
+//			PATH DE FICHERO CSV
+//			/home/jordi/proyectosJavaEclipse/jordi_estelles_navarro_AE4_ADD/datos/AE04_T1_4_JDBC_Datos.csv			
+			FileReader fr = new FileReader( rutaFichero );
 			
 			BufferedReader br = new BufferedReader( fr );
 			String linea = br.readLine();
@@ -32,13 +35,21 @@ public class GestionBD
 			
 			while( linea != null )
 			{
-				evitarTitulos ++; // Evita que genere un libro con los titulos del atributo ( 1ra linea )
+				evitarTitulos ++; // Evita que genere un libro con los titulos de los atributos ( 1ra linea = titulo, editorial... )
 				
 				if( evitarTitulos > 1 )
 				{				
 					String[] datosLibro = linea.split( ";" );
 					
-					Libro nuevoLibro = new Libro( datosLibro[0], datosLibro[1], datosLibro[2], Integer.valueOf( datosLibro[3]), datosLibro[4], Integer.valueOf(datosLibro[5]) );
+					for( int i = 0; i < datosLibro.length; i++ )
+					{
+						if( datosLibro[ i ].equals( "" ) )
+						{
+							datosLibro[ i ] = "NC";
+						}
+					}
+					
+					Libro nuevoLibro = new Libro( datosLibro[0], datosLibro[1], datosLibro[2], Integer.valueOf( datosLibro[3] ), datosLibro[4], Integer.valueOf(datosLibro[5]) );
 					librosEnCSV.add( nuevoLibro );
 				}
 				
@@ -57,7 +68,8 @@ public class GestionBD
 	
 	public void MigracionABDMySQL( ArrayList<Libro> almacenLibros ) throws ClassNotFoundException
 	{		
-		Class.forName( "com.mysql.cj.jdbc.Driver" ); // Click derecho en proyecto > build path > configure build path > libraries > module path > anyadir libreria externa > archivo .jar
+		// Click derecho en proyecto > build path > configure build path > libraries > module path > anyadir libreria externa > archivo .jar
+		Class.forName( "com.mysql.cj.jdbc.Driver" ); 
 		
 		try 
 		{
@@ -91,7 +103,7 @@ public class GestionBD
 		{
 			System.out.println( ">> Error en la conexion. " );
 			e.printStackTrace();			
-		}
+		}	
 	}
 	
 	
@@ -104,18 +116,31 @@ public class GestionBD
 		{
 			System.out.println( ">> Conectando a la base de datos. " );
 			Connection con = DriverManager.getConnection( "jdbc:mysql://localhost:3306/biblioteca","root","");
-			System.out.println( ">> Conexion correcta. " );
+			System.out.println( ">> Conexion correcta.\n" );
 			
 			Statement stmt = con.createStatement();
 			
-			ResultSet rs = stmt.executeQuery( consulta );
-			ResultSetMetaData rsmd = rs.getMetaData();
+			//EJECUTA LA CONSULTA Y DEVUELVE TRUE SI LA CONSULTA ES DE TIPO SELECT
+			//boolean tipoConsulta = stmt.execute( consulta );
 			
-			System.out.println( rsmd.getColumnCount() );
+			String tipoConsulta[] = consulta.split( " " );
+			
+			if( tipoConsulta[0].equals( "SELECT" ) || tipoConsulta[0].equals( "select" ) )
+			{
+				// SELECT
+				ResultSet rs = stmt.executeQuery( consulta );
+				MostrarConsulta( rs );
+				rs.close();
+			}
+			else
+			{
+				// INSERT UPDATE DELETE CREATE ALTER
+				int filasAfectadas = stmt.executeUpdate( consulta );
+				System.out.println( ">> " + filasAfectadas + " filas afectadas." );
+			}
 			
 			System.out.println( ">> Consulta realizada correctamente." );
 			
-			rs.close();
 			con.close();
 		}
 		catch( SQLException e )
@@ -127,9 +152,11 @@ public class GestionBD
 	
 	
 	
+	
+	// ESTE METODO LO HE HECHO ASI PORQUE QUERIA PROBAR " System.out.format() "
 	public void ConsultasRequeridas() throws ClassNotFoundException
 	{
-		String infoGeneralLibros = "SELECT titulo, autor, anyo_publicacion FROM libro GROUP BY autor"; //MODIFICAR
+		String infoGeneralLibros = "SELECT titulo, autor, anyo_publicacion FROM libro GROUP BY autor";
 		String editorialesSiglo21 = "SELECT anyo_publicacion, editorial, COUNT(editorial) AS libros_siglo21 FROM libro WHERE anyo_publicacion>2000 GROUP BY editorial";
 		
 		try 
@@ -199,7 +226,7 @@ public class GestionBD
 			System.out.println( "Cuando termine la sentencia escribir : FIN");
 			System.out.println( "---");
 
-			String comodinConsulta = "";
+			String comodinConsulta = "";	
 			
 			while( !comodinConsulta.equals( "FIN" ) && !comodinConsulta.equals( "fin" ) )
 			{
@@ -222,7 +249,26 @@ public class GestionBD
 			comprobarConsulta = sc.next();
 			
 		}while( comprobarConsulta.equals( "N" ) || comprobarConsulta.equals( "n" ) );
-		
+
 		return consulta;
+	}
+	
+	
+	
+	public void MostrarConsulta( ResultSet rs ) throws ClassNotFoundException, SQLException
+	{
+		ResultSetMetaData rsmd = rs.getMetaData();
+		
+		while( rs.next() )
+		{
+			String resultadoConsulta = "";
+			
+			for( int i = 1; i <= rsmd.getColumnCount(); i++ )
+			{	
+				resultadoConsulta += rs.getString( i ) + "\t";
+			}
+			
+			System.out.println( resultadoConsulta );
+		}
 	}
 }

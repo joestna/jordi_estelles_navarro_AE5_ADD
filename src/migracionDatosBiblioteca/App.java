@@ -1,10 +1,11 @@
 package migracionDatosBiblioteca;
 
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class App {
 
-	public static void main(String[] args) throws ClassNotFoundException
+	public static void main(String[] args) throws ClassNotFoundException, FileNotFoundException
 	{
 		Scanner sc = new Scanner( System.in );
 		
@@ -29,15 +30,13 @@ public class App {
 				case "1" :
 					System.out.println( "Introduce la ruta del fichero CSV : " );
 					String rutaFichero = sc.next();
-					
+
 					biblioteca.setAlmacenLibros( gestorBD.AnalizarCSV( rutaFichero ) );				
 					gestorBD.MigracionABDMySQL( biblioteca.getAlmacenLibros() );
 					break;
 					
-				case "2" :
-					
-					String consulta = gestorBD.GenerarConsulta( sc );
-					
+				case "2" :					
+					String consulta = gestorBD.GenerarConsulta( sc );					
 					gestorBD.ConsultarBD( consulta );
 					break;
 					
