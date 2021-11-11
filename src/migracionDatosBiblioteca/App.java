@@ -5,6 +5,10 @@ import java.util.Scanner;
 
 public class App {
 
+	// Metodo : main
+	// Parametros : String[] 
+	// Funcionalidad : Consultas en bucle para ejecutar funcionalidades
+	// Return : void
 	public static void main(String[] args) throws ClassNotFoundException, FileNotFoundException
 	{
 		Scanner sc = new Scanner( System.in );

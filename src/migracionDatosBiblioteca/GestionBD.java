@@ -17,6 +17,10 @@ import java.util.Scanner;
 
 public class GestionBD 
 {
+	// Metodo : AnalizarCSV
+	// Parametros : String
+	// Funcionalidad : Recorre un fichero CSV, extrae la informacion y la guarda en un ArrayList<Libro>
+	// Return : ArrauList<Libro>
 	public ArrayList<Libro> AnalizarCSV( String rutaFichero )
 	{
 		ArrayList<Libro> librosEnCSV = new ArrayList<Libro>();
@@ -66,6 +70,10 @@ public class GestionBD
 	
 	
 	
+	// Metodo : MigracionABDMySQL()
+	// Parametros : ArrayList<Libro>
+	// Funcionalidad : Migra la informacion de cada uno de los libros en un ArrayList<Libro> a una base de datos
+	// Return : void
 	public void MigracionABDMySQL( ArrayList<Libro> almacenLibros ) throws ClassNotFoundException
 	{		
 		// Click derecho en proyecto > build path > configure build path > libraries > module path > anyadir libreria externa > archivo .jar
@@ -108,6 +116,10 @@ public class GestionBD
 	
 	
 	
+	// Metodo : ConsultarBD
+	// Parametros : String
+	// Funcionalidad : Consultar una base de datos pasandole un String con la consulta
+	// Return : void
 	public void ConsultarBD( String consulta ) throws ClassNotFoundException
 	{
 		Class.forName( "com.mysql.cj.jdbc.Driver" );
@@ -152,6 +164,10 @@ public class GestionBD
 	
 	
 	
+	// Metodo : ConsultasRequeridas()
+	// Parametros : 
+	// Funcionalidad : Realiza las consultas propuestas en el enunciado del ejercicio, ademas muestra los resultados con formato
+	// Return : void
 	
 	// ESTE METODO LO HE HECHO ASI PORQUE QUERIA PROBAR " System.out.format() "
 	public void ConsultasRequeridas() throws ClassNotFoundException
@@ -213,6 +229,10 @@ public class GestionBD
 	
 	
 
+	// Metodo : GenerarConsulta()
+	// Parametros : Scanner
+	// Funcionalidad : Anyade las palabras de una consulta individualmente a un String con la consulta completa y pregunta al usuario si es correcta
+	// Return : String
 	public String GenerarConsulta( Scanner sc )
 	{
 		String comprobarConsulta;
@@ -243,8 +263,9 @@ public class GestionBD
 				}
 			}		
 			
-			System.out.println( "---");
+			System.out.println( "---\n");
 			System.out.println( consulta );
+			System.out.println( "\n---");
 			System.out.println( "> Es correcta la consulta? : S/N" );
 			comprobarConsulta = sc.next();
 			
@@ -255,6 +276,10 @@ public class GestionBD
 	
 	
 	
+	// Metodo : MostrarConsulta()
+	// Parametros : ResultSet
+	// Funcionalidad : Muestra los resultados de la consulta realizada que pasamos por parametro
+	// Return : void
 	public void MostrarConsulta( ResultSet rs ) throws ClassNotFoundException, SQLException
 	{
 		ResultSetMetaData rsmd = rs.getMetaData();
