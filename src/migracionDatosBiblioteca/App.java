@@ -27,19 +27,7 @@ public class App {
 		session.beginTransaction();
 		
 		// Controlador
-		//Controlador( session, sc );
-		
-		try
-		{
-			List<Libro> biblioteca = new ArrayList(); //Diferencia entre list y arraylist??
-			biblioteca = session.createQuery("FROM libro").list();
-			
-			System.out.println("\nLibros mostrados correctamente de la Base de Datos\n");
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
+		Controlador( session, sc );		
 	
 		// Finalizar la conexion con base de datos
 		session.getTransaction().commit();
