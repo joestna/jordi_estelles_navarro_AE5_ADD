@@ -30,9 +30,10 @@ public class App {
 		
 		// Controlador
 		Controlador( session, sc );
-		
+	
 		// Finalizar la conexion con base de datos
-				
+		session.getTransaction().commit();
+		session.close();				
 	}
 	
 	static void Controlador( Session session, Scanner sc )
