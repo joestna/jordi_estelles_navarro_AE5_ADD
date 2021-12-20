@@ -10,7 +10,7 @@
 		<property name="autor" type="string" column="autor"/>
 		<property name="anyoNacimiento" type="string" column="anyo_nacimiento"/>
 		<property name="anyoPublicacion" type="int" column="anyo_publicacion"/>
-		<property name="editorial" type="int" column="editorial"/>
+		<property name="editorial" type="string" column="editorial"/>
 		<property name="numeroPaginas" type="int" column="numero_paginas"/>
 	</class>
 </hibernate-mapping>

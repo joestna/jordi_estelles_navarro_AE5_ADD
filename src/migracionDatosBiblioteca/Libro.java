@@ -108,6 +108,6 @@ public class Libro
 	
 	public String toString()
 	{
-		return( "Objeto libro : " + getId() + " " + getTitulo() + " " + getAutor() + " " + getAnyoNacimiento() + " " + getAnyoPublicacion() + " " + getEditorial() + " " + getNumeroPaginas() );
+		return( "Titulo : " + getTitulo() + " | Autor : " + getAutor() + " | Anyo Nacimiento : " + getAnyoNacimiento() + " | Anyo Publicacion : " + getAnyoPublicacion() + " | Editorial : " + getEditorial() + " | Numero Paginas : " + getNumeroPaginas() + " | ID : " +  getId() );
 	}
 }
