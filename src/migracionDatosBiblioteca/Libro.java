@@ -8,6 +8,7 @@ public class Libro
 	private int _anyoPublicacion;
 	private String _editorial;
 	private int _numeroPaginas;
+	// No creamos un atributo de clase "id" porque de eso se encarga la base de datos
 	
 	public Libro( String titulo, String autor, String anyoNacimiento, int anyoPublicacion, String editorial, int numeroPaginas )
 	{
