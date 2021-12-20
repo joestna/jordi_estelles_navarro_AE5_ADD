@@ -15,12 +15,14 @@ public class App {
 	
 	static boolean continuar = true;
 
+	// Realiza la conexion a la base de datos utilizando hibernate y asegura las query
 	public static void main(String[] args)
 	{
 		Scanner sc = new Scanner(System.in);
 		
 		while( continuar ) 
 		{
+			// Conexion a base de datos con hibernate
 			Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
 			configuration.addClass(Libro.class);
 			ServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
@@ -36,11 +38,12 @@ public class App {
 			session.getTransaction().commit();
 			session.close();
 		}
-		// Conexion a base de datos con hibernate
 
 		System.out.println(" >> FIN << ");
 	}
 	
+	
+	// Controlador de la app, gestiona el control de la conexion a la base de datos
 	static void Controlador( Session session, Scanner sc )
 	{	
 		boolean appContinua = true;
@@ -176,6 +179,9 @@ public class App {
 		}
 	}
 	
+	
+	// Crea un libro, se utiliza para crear y anyadir libros a la base de datos pero tambien para modificar un libro ya existente
+	// Devuelve un libro
 	static Libro CrearUnLibro( Scanner sc )
 	{
 		System.out.print( "\nIntroduce el titulo del libro : " );

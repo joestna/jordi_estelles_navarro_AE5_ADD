@@ -1,5 +1,8 @@
 package migracionDatosBiblioteca;
 
+// Clase libro que servira para almacenar la informacion de los libros al untilizar hibernate
+// Contiene todos los getters y setters para poder acceder a cada uno de sus atributos
+// Sobrecarga de constructores 
 public class Libro 
 {
 	private String titulo;
