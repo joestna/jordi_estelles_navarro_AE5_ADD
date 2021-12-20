@@ -17,105 +17,6 @@ import java.util.Scanner;
 
 public class GestionBD 
 {
-	// Metodo : AnalizarCSV
-	// Parametros : String
-	// Funcionalidad : Recorre un fichero CSV, extrae la informacion y la guarda en un ArrayList<Libro>
-	// Return : ArrauList<Libro>
-	public ArrayList<Libro> AnalizarCSV( String rutaFichero )
-	{
-		ArrayList<Libro> librosEnCSV = new ArrayList<Libro>();
-
-		try
-		{
-			
-//			PATH DE FICHERO CSV
-//			/home/jordi/proyectosJavaEclipse/jordi_estelles_navarro_AE4_ADD/datos/AE04_T1_4_JDBC_Datos.csv			
-			FileReader fr = new FileReader( rutaFichero );
-			
-			BufferedReader br = new BufferedReader( fr );
-			String linea = br.readLine();
-			
-			int evitarTitulos = 0;
-			
-			while( linea != null )
-			{
-				evitarTitulos ++; // Evita que genere un libro con los titulos de los atributos ( 1ra linea = titulo, editorial... )
-				
-				if( evitarTitulos > 1 )
-				{				
-					String[] datosLibro = linea.split( ";" );
-					
-					for( int i = 0; i < datosLibro.length; i++ )
-					{
-						if( datosLibro[ i ].equals( "" ) )
-						{
-							datosLibro[ i ] = "NC";
-						}
-					}
-					
-					Libro nuevoLibro = new Libro( datosLibro[0], datosLibro[1], datosLibro[2], Integer.valueOf( datosLibro[3] ), datosLibro[4], Integer.valueOf(datosLibro[5]) );
-					librosEnCSV.add( nuevoLibro );
-				}
-				
-				linea = br.readLine();
-			}
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();			
-		}
-		
-		return librosEnCSV;
-	}
-	
-	
-	
-	// Metodo : MigracionABDMySQL()
-	// Parametros : ArrayList<Libro>
-	// Funcionalidad : Migra la informacion de cada uno de los libros en un ArrayList<Libro> a una base de datos
-	// Return : void
-	public void MigracionABDMySQL( ArrayList<Libro> almacenLibros ) throws ClassNotFoundException
-	{		
-		// Click derecho en proyecto > build path > configure build path > libraries > module path > anyadir libreria externa > archivo .jar
-		Class.forName( "com.mysql.cj.jdbc.Driver" ); 
-		
-		try 
-		{
-			System.out.println( ">> Conectando a la base de datos. " );
-			Connection con = DriverManager.getConnection( "jdbc:mysql://localhost:3306/biblioteca","root",""); // "", "usuario". "contrasenya"
-			System.out.println( ">> Conexion correcta. " );
-			
-			PreparedStatement psInsertar = con.prepareStatement( "INSERT INTO libro (titulo, autor, anyo_nacimiento, anyo_publicacion, editorial, numero_paginas, identificador) VALUES (?, ?, ?, ?, ?, ?, NULL)" );
-			int elementosImportados = 0;
-			
-			for( Libro libro : almacenLibros ) 
-			{
-				psInsertar.setString( 1, libro.getTitulo() );
-				psInsertar.setString( 2, libro.getAutor() );
-				psInsertar.setString( 3, libro.getAnyoNacimiento() );
-				psInsertar.setInt( 4, libro.getAnyoPublicacion() );
-				psInsertar.setString( 5, libro.getEditorial() );
-				psInsertar.setInt( 6, libro.getNumeroPaginas() );
-				psInsertar.executeUpdate();
-					
-				elementosImportados ++;
-			}
-			
-			System.out.println( ">> Insercion correcta. Numero de elementos importados a la BD : " + elementosImportados );
-			
-			psInsertar.close();
-			con.close();
-			
-		}
-		catch( SQLException e )
-		{
-			System.out.println( ">> Error en la conexion. " );
-			e.printStackTrace();			
-		}	
-	}
-	
-	
-	
 	// Metodo : ConsultarBD
 	// Parametros : String
 	// Funcionalidad : Consultar una base de datos pasandole un String con la consulta
@@ -162,6 +63,80 @@ public class GestionBD
 		}
 	}
 	
+	
+	
+	public void MostrarInformacionLibro(int id) throws ClassNotFoundException
+	{
+		String consultaInfoLibrosConID = "SELECT * FROM libro WHERE identificador = " + id;
+		
+		try 
+		{
+			ConsultarBD( consultaInfoLibrosConID );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void AnyadirLibroBD( String titulo, String autor, String anyoNacimiento, int anyoPublicacion, String editorial, int numPaginas ) throws ClassNotFoundException
+	{
+		String consultaAnyadirLibro = "INSERT INTO libro VALUES ('" + titulo + "','" + autor + "','" + anyoNacimiento + "'," + anyoPublicacion + ",'" + editorial + "'," + numPaginas + ", NULL);";
+		
+		try 
+		{
+			ConsultarBD( consultaAnyadirLibro );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void BorrarLibroBD( int id )
+	{
+		String consultaBorrarLibroConID = "DELETE from libro WHERE identificador = " + id;
+		
+		try 
+		{
+			ConsultarBD( consultaBorrarLibroConID );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void ModificarLibroBD( String titulo, String autor, String anyoNacimiento, int anyoPublicacion, String editorial, int numPaginas, int id )
+	{
+		String consultaModificarLibroConID = "UPDATE libro SET titulo = '" + titulo + "'," + "autor = '" + autor + "', anyo_nacimiento = '" + anyoNacimiento + "', anyo_publicacion = " + anyoPublicacion + ", editorial = '" + editorial + "', numero_paginas = " + numPaginas + " WHERE identificador = " + id;
+		
+		try 
+		{
+			ConsultarBD( consultaModificarLibroConID );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void MostrarInformacionTodosLosLibros()
+	{
+		String consultaMostrarInformacionTodosLosLibros = "SELECT * FROM libro";
+		
+		try 
+		{
+			ConsultarBD( consultaMostrarInformacionTodosLosLibros );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	//private void
 	
 	
 	// Metodo : ConsultasRequeridas()
@@ -246,8 +221,8 @@ public class GestionBD
 			System.out.println( "Cuando termine la sentencia escribir : FIN");
 			System.out.println( "---");
 
-			String comodinConsulta = "";	
-			
+			String comodinConsulta = "";
+		
 			while( !comodinConsulta.equals( "FIN" ) && !comodinConsulta.equals( "fin" ) )
 			{
 				comodinConsulta = sc.next();
@@ -259,9 +234,23 @@ public class GestionBD
 				}
 				else
 				{
-					consulta = consulta.substring(0, consulta.length() -1 );
+					//Evita que si la primera palabra de la consulta ya es FIN el programa explote
+					if( consulta.length() > 1 ) 
+					{
+						consulta = consulta.substring(0, consulta.length() -1 );
+					}
+					else
+					{
+						consulta = "No hay consulta";
+					}
+					
 				}
 			}		
+			
+			if(consulta.equals("No hay consulta")) {
+				System.out.println( "---\n");
+				break;
+			}
 			
 			System.out.println( "---\n");
 			System.out.println( consulta );
