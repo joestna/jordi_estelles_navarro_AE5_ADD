@@ -127,8 +127,12 @@ public class App {
 					int id = sc.nextInt();
 					
 					Libro libroModificar = (Libro) session.get(Libro.class, id); // almacena la informacion de un libro de la base de datos en el libro
-					Libro libroModificado = CrearUnLibro( sc );// Crea un nuevo libro que reescribe al libro en bd
+					Libro libroModificado = CrearUnLibro( sc, libroModificar );// Crea un nuevo libro que reescribe al libro en bd
+					//libroModificado.setId(id);
+					
+					//libroModificar.setTitulo("prueba");
 					session.update(libroModificado);
+					//session.save(libroModificar);
 					
 					System.out.println(">> Libro actualizado correctamente de la Base de Datos\n");
 				}
@@ -204,6 +208,30 @@ public class App {
 		
 		Libro libro = new Libro( titulo, autor, anyoNacimiento, anyoPublicacion, editorial, numPaginas );
 		
+		return libro;
+	}
+	
+	
+	static Libro CrearUnLibro( Scanner sc, Libro libro )
+	{
+		System.out.print( "\nIntroduce el titulo del libro : " );
+		libro.setTitulo(sc.next());
+		
+		System.out.print( "Introduce el autor del libro : " );
+		libro.setAutor(sc.next());
+		
+		System.out.print( "Introduce el anyo de nacimiento del autor del libro : " );
+		libro.setAnyoNacimiento(sc.next());
+		
+		System.out.print( "Introduce el anyo de publicacion del libro : " );
+		libro.setAnyoPublicacion(sc.nextInt());
+		
+		System.out.print( "Introduce la editorial del libro : " );
+		libro.setEditorial(sc.next());
+		
+		System.out.print( "Introduce el numero de paginas del libro : " );
+		libro.setNumeroPaginas(sc.nextInt());
+				
 		return libro;
 	}
 }
